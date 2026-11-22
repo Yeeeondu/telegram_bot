@@ -136,13 +136,14 @@ def update_profile(db, prof_state):
     base = {k: cfg_prof.get(k) for k in ("summary", "next_topics") if cfg_prof.get(k)}
     prev = (prof_state.get("profile") or {})
     prev = {k: prev.get(k) for k in ("shift", "themes") if prev.get(k)}
-    prompt = ("내가 즐겨 읽는 투자 블로거 5명(블로그 ID별)의 관심사 정리와 최근 글이다.\n"
+    n = len(load_config()["blogs"]["ids"])
+    prompt = (f"내가 즐겨 읽는 투자 블로거 {n}명(블로그 ID별)의 관심사 정리와 최근 글이다.\n"
               f"[기본 관심사 — 블로그 전체 글을 읽고 정리한 것]\n{json.dumps(base, ensure_ascii=False)}\n\n"
               f"[지난주 분석]\n{json.dumps(prev, ensure_ascii=False)}\n\n"
               f"[블로거별 최근 글]\n{json.dumps(recent, ensure_ascii=False)[:60000]}\n\n"
               "1) 블로거별로 관심사가 어디로 이동하고 있는지 정리하고, "
               "2) 이들이 '앞으로' 쓸 글에 담길 내용을 예측해, 그 글을 쓰기 전에 읽을 법한 기사를 찾는 구글 뉴스 검색어를 만들어라. "
-              "반드시 다섯 블로거 모두를 고르게 다뤄라(블로거마다 5~7개, 총 25~35개). "
+              f"반드시 {n}명 블로거 모두를 고르게 다뤄라(블로거마다 5~7개, 총 {n * 5}~{n * 7}개). "
               "이미 쓴 글의 주제를 반복하기보다 다음 단계·파생 이슈·선행 지표 위주로. "
               "검색어는 1~4단어, 한국어(lang=ko)와 영어(lang=en)를 섞어라.\n"
               '출력: {"shift": "전체 흐름 2~3문장", "by_blog": {"블로그ID": "그 블로거의 관심 이동 1~2문장"}, '

@@ -150,18 +150,19 @@ thirteenf:
 
 # ───────── 매주 일요일 밤: 블로그 학습 + 쉰 블로거 대신 기사 ─────────
 blogs:
-  ids: ["dhgusdnd44", "travelingcompanion", "mech05", "ironbed2", "rnjs1016k"]
+  ids: ["dhgusdnd44", "travelingcompanion", "mech05", "ironbed2", "rnjs1016k", "lollapalooza-"]
   max_articles: 15
   # 블로거들의 전체 글을 읽고 정리한 관심사와 블로거별 검색어 (blog: 블로그 ID).
   # API 키가 있으면 매주 일요일 AI가 갱신한 검색어가 우선 쓰이고, 없으면 여기 값을 씀.
   profile:
     updated: "2026-11-17"
     summary: >-
-      다섯 블로거 모두 AI 사이클과 그 파급효과를 중심에 두고 있음.
+      여섯 블로거 모두 AI 사이클과 그 파급효과를 중심에 두고 있음.
       dhgusdnd44: '흥미로운 데이터' 시리즈(AI capex·금리·헤지펀드 포지션·변동성 펀드)와 산업 알아보기 시리즈(조선·전력기기·엔터·방산·광통신·기판 → 최근 로봇 1부).
       travelingcompanion: 메모리(하이닉스·삼성·HBM), 한국 지배구조·IR·주주환원, 소비재 리레이팅(신세계·에이피알·K뷰티), 드러켄밀러·Citrini·SemiAnalysis·Stratechery 등 투자 대가와 해외 리서치.
       mech05: AI가 경제·일자리·연구에 미치는 영향, 앤트로픽 상장, 연산 가격과 CUDA·TPU 경쟁, GLP-1 파급효과, 머스크·스페이스X, 책 리뷰.
       ironbed2: 코스피·코스닥 수급과 정책, 반도체 지수 조정, 지정학(한반도·중일·미중·이란), 연준(케빈 워시)과 미국 정치.
+      lollapalooza-(롤라팔루자): 해외 투자자·경영진 인터뷰·강연 영상을 인용·TL;DR·핵심 요약으로 정리 (예: Altimeter AI 투자 전략 — 빅테크 capex, 에이전트, Anthropic·OpenAI 수익성, SpaceX·Google 컴퓨팅, 오픈소스, 사이버보안). 처음 추가라 다음 수집 때 AI가 보강.
       rnjs1016k: 원유·유조선(VLCC)·해양시추·정제마진·LNG·석탄, 조선 수주, 전력설비·데이터센터, 중동 전쟁과 미국 금리.
     next_topics:
       - "로봇 산업 2부 이후: 휴머노이드 부품(감속기·액추에이터·센서)과 중국 로봇 기업"
@@ -210,6 +211,11 @@ blogs:
       - {q: "LNG long-term contract", lang: en, blog: rnjs1016k}
       - {q: "조선 수주 신조선가", lang: ko, blog: rnjs1016k}
       - {q: "변압기 수주 데이터센터 전력", lang: ko, blog: rnjs1016k}
+      - {q: "AI agents enterprise adoption", lang: en, blog: lollapalooza-}
+      - {q: "Anthropic OpenAI revenue compute margin", lang: en, blog: lollapalooza-}
+      - {q: "neocloud compute pricing", lang: en, blog: lollapalooza-}
+      - {q: "AI 투자 전략 인터뷰", lang: ko, blog: lollapalooza-}
+      - {q: "open source model inference Baseten Fireworks", lang: en, blog: lollapalooza-}
 
 # ───────── 매주 일요일 밤: 빅테크·AI 기업 자금 조달 ─────────
 # 새 발행이 있는 주에만 그 회사의 기록을 보냄. 합계는 기록을 달러로 환산해 자동 계산.
@@ -359,3 +365,12 @@ earnings:
     claude-haiku-5-5: [0.10, 0.50]
     claude-sonnet-5-5: [2.0, 10.0]
   budget_min: 95               # 한 번 실행에서 쓰는 최대 시간(분). 남은 건 다음 날 이어감
+
+# ---------- 유튜브 주간 요약 (블로거 6명 관심사 기준) ----------
+youtube:
+  per_week: 5
+  query_model: claude-haiku-5-5
+  # 매주 새 영상을 확인할 채널 (@핸들). 틀린 핸들은 건너뜀
+  channels: ["@BG2Pod", "@DwarkeshPatel", "@joincolossus", "@a16z", "@NoPriorsPodcast", "@AcquiredFM",
+             "@allin", "@20VC", "@stanfordgsb", "@StanfordOnline", "@SemiAnalysis", "@lexfridman"]
+  extra_queries: ["Altimeter Brad Gerstner", "Apoorv Agrawal AI", "AI capex interview", "data center power interview"]
