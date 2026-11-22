@@ -33,7 +33,34 @@ def video_id(url):
     return m.group(1)
 
 
-# ---------- 자막 가져오기 (두 가지 방법을 차례로 시도) ----------
+# ---------- 자막 가져오기 (여러 방법을 차례로 시도) ----------
+def via_supadata(vid):
+    """Supadata 자막 서비스 (GitHub 서버는 유튜브가 직접 막아서 이걸 먼저 씀). 무료 월 100건."""
+    key = os.environ.get("SUPADATA_API_KEY")
+    if not key:
+        raise RuntimeError("SUPADATA_API_KEY 없음")
+    h = {"x-api-key": key}
+    r = requests.get("https://api.supadata.ai/v1/transcript", headers=h, timeout=120,
+                     params={"url": f"https://www.youtube.com/watch?v={vid}", "text": "true", "mode": "native"})
+    if r.status_code == 202 or (r.ok and "jobId" in r.json()):   # 긴 영상은 작업 번호를 주고 나중에 결과
+        job = r.json()["jobId"]
+        for _ in range(60):
+            time.sleep(10)
+            r = requests.get(f"https://api.supadata.ai/v1/transcript/{job}", headers=h, timeout=60)
+            j = r.json()
+            if j.get("status") in ("completed", None) and j.get("content"):
+                break
+            if j.get("status") == "failed":
+                raise RuntimeError(f"Supadata 작업 실패: {str(j)[:200]}")
+    if not r.ok:
+        raise RuntimeError(f"Supadata HTTP {r.status_code}: {r.text[:200]}")
+    c = r.json().get("content")
+    if isinstance(c, list):
+        c = " ".join(x.get("text", "") for x in c)
+    return c or ""
+
+
+
 def via_transcript_api(vid):
     from youtube_transcript_api import YouTubeTranscriptApi
     if hasattr(YouTubeTranscriptApi, "get_transcript"):          # 0.6.x
@@ -60,7 +87,7 @@ def via_ytdlp(vid):
 
 def transcript(vid):
     errs = []
-    for name, fn in (("youtube-transcript-api", via_transcript_api), ("yt-dlp", via_ytdlp)):
+    for name, fn in (("Supadata", via_supadata), ("youtube-transcript-api", via_transcript_api), ("yt-dlp", via_ytdlp)):
         try:
             text = re.sub(r"\s+", " ", fn(vid)).strip()
             if len(text) > 500:
