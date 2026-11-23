@@ -673,5 +673,25 @@
         "recorded": "2026-11-20"
       }
     ]
-  }
+  },
+  "_plans_sent": [
+    {
+      "date": "2026-11-23",
+      "company": "Oracle",
+      "occasion": "오라클, OpenAI 인프라 계약 자금 전액 확보 발표(마지막 자금 조달 완료)",
+      "key": "oraclesaysopenaiinfrastructuredealisfullyfundedafterfinalcap"
+    },
+    {
+      "date": "2026-11-23",
+      "company": "SpaceX",
+      "occasion": "스페이스X 440억 달러 칩 리스 금융 추진 및 머스크의 매출 공백 경고",
+      "key": "spacextaps44billionchipleasedealasmuskwarnsofrevenuegap"
+    },
+    {
+      "date": "2026-11-23",
+      "company": "MS",
+      "occasion": "마이크로소프트 AI 투자용 250억 달러 회사채 발행 추진 보도",
+      "key": "msai투자위해250억달러회사채발행추진주문4배몰려시애틀뉴스핫이슈"
+    }
+  ]
 }
