@@ -152,6 +152,12 @@ thirteenf:
 blogs:
   ids: ["dhgusdnd44", "travelingcompanion", "mech05", "ironbed2", "rnjs1016k", "lollapalooza-"]
   max_articles: 15
+  names: {"lollapalooza-": "롤라팔루자"}
+  # 사용자가 '이런 걸 받고 싶다'고 보여준 예시 (블로거 글에서 찾은 것). 기사·영상 고를 때 기준으로 씀
+  examples:
+    - "유튜브 Sourcery(Molly O'Shea) — Altimeter Apoorv Agrawal 인터뷰 'Anthropic's Record IPO? OpenAI, SpaceX & the Future of AI' (AI 4대 축, Anthropic 재무·밸류에이션, AI capex, 에이전트, 사이버보안)"
+    - "유튜브 Stanford 강연 — Altimeter Apoorv Agrawal 'AI 투자 전략' (빅테크 capex 8,600억 달러, 전력 부족 10~15GW, SpaceX 컴퓨팅 단기 임대)"
+    - "기사 OfficeChai(NYT 인용) — 'Elon Musk Renamed A SpaceXAI Group Chat To Sell Compute Because We Can't Compete' (SpaceXAI가 모델 경쟁에서 밀려 컴퓨팅 임대로 전환, Anthropic이 주요 고객)"
   # 블로거들의 전체 글을 읽고 정리한 관심사와 블로거별 검색어 (blog: 블로그 ID).
   # API 키가 있으면 매주 일요일 AI가 갱신한 검색어가 우선 쓰이고, 없으면 여기 값을 씀.
   profile:

@@ -9,7 +9,7 @@ import json
 import re
 import sys
 
-from common import html_escape
+from common import load_config, html_escape
 from news import ask_claude_json, dedupe, google_news, link, llm_available, send_long
 
 
@@ -50,6 +50,9 @@ def send_for_silent(silent, ai_prof, cfg_prof, n=15):
                   "1) 이들은 AI·반도체·에너지·금리·유가 같은 거시 흐름을 다룬다. 업황 전체를 가늠할 수 있는 기사만 고른다.\n"
                   "   - 포함 예: 하이퍼스케일러 투자 계획, HBM4·메모리 가격, 소프트뱅크 가스터빈 주문 취소, 탱커 운임 하락, 연준 금리 결정, 유가·OPEC\n"
                   "   - 포함 예: '휴머노이드 로봇 ETF 출시'처럼 개별 기업 소식이어도 산업 전체의 흐름을 보여 주는 것\n"
+                  "   - 포함 예: '머스크가 SpaceXAI 내부 채팅방 이름을 \"경쟁 못 하니 컴퓨팅을 팔자\"로 바꿨다'(NYT 보도)처럼 "
+                  "AI 업계 큰 회사의 전략 전환·내부 판단을 보여 주는 기사\n"
+                  f"   - 사용자가 직접 보여준 원하는 예시: {json.dumps(load_config()['blogs'].get('examples', []), ensure_ascii=False)}\n"
                   "   - 제외 예: 'LS일렉트릭 1300억 전력설비 공급', '삼현, 휴머노이드 액추에이터 공급 임박…내년 로봇 매출 200억 전망'처럼 "
                   "업황 전체를 보기엔 작은 개별 기업의 수주·실적·매출 전망 기사 (증권사 개별 종목 리포트 포함)\n"
                   "2) 주가·지수 전망 기사는 제외 (예: '코스피 3900까지 떨어질 것', 목표주가, 증시 전망, 애널리스트 매수 추천).\n"

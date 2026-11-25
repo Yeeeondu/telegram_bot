@@ -6,6 +6,7 @@
    (모두 글을 올렸으면 아무것도 보내지 않음)
 """
 import datetime as dt
+import html as html_lib
 import json
 import re
 import sys
@@ -66,7 +67,37 @@ def title_list(bid, max_pages=40):
     return out
 
 
-def post_body(bid, log_no, limit=4000):
+SKIP_HOST = re.compile(r"(naver\.(com|net)|pstatic\.net|blog\.me|navercorp|kakao|coupang|"
+                       r"googletagmanager|google-analytics|doubleclick|facebook\.com/sharer|w3\.org|schema\.org)", re.I)
+SKIP_EXT = re.compile(r"\.(jpe?g|png|gif|webp|svg|css|js|ico|woff2?)(\?|$)", re.I)
+
+
+def norm_url(u):
+    u = html_lib.unescape(u).replace("\\/", "/").strip()
+    m = re.search(r"(?:youtube\.com/(?:embed/|watch\?v=|shorts/|live/)|youtu\.be/)([\w-]{11})", u)
+    if m:
+        return f"https://www.youtube.com/watch?v={m.group(1)}"
+    return re.sub(r"[?&](utm_[^&]+|si=[^&]+|fbclid=[^&]+)", "", u).rstrip("?&")
+
+
+def extract_links(page):
+    """본문에 나온 외부 링크(기사·자료·유튜브). 네이버 내부·이미지는 뺌."""
+    raw = re.findall(r'(?:href|src)="(https?://[^"]+)"', page)
+    raw += re.findall(r'(?:inputUrl|link|url)(?:"|&quot;|\\")?\s*:\s*(?:"|&quot;|\\")(https?:[^"&\\]+)', page)
+    raw += [f"https://www.youtube.com/watch?v={v}" for v in
+            re.findall(r"(?:youtube\.com/(?:embed/|watch\?v=|shorts/|live/)|youtu\.be/)([\w-]{11})", page)]
+    out = []
+    for u in raw:
+        u = norm_url(u)
+        host = re.sub(r"^https?://", "", u).split("/")[0]
+        if SKIP_HOST.search(host) or SKIP_EXT.search(u) or len(u) < 15:
+            continue
+        if u not in out:
+            out.append(u)
+    return out[:30]
+
+
+def post_body(bid, log_no, limit=4000, with_links=False):
     try:
         r = requests.get(f"https://blog.naver.com/PostView.naver?blogId={bid}&logNo={log_no}",
                          headers=H, timeout=30)
@@ -75,11 +106,12 @@ def post_body(bid, log_no, limit=4000):
         m = re.search(r'<div class="se-main-container">(.*?)</div>\s*</div>\s*</div>\s*<!--', html, re.S) \
             or re.search(r'<div class="se-main-container">(.*)', html, re.S) \
             or re.search(r'id="postViewArea"(.*)', html, re.S)
-        text = _strip(re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", m.group(1) if m else html, flags=re.S))
-        return text[:limit]
+        part = m.group(1) if m else html
+        text = _strip(re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", part, flags=re.S))[:limit]
+        return (text, extract_links(part)) if with_links else text
     except Exception as e:  # noqa: BLE001
         print(f"{bid}/{log_no} 본문 실패: {e}", file=sys.stderr)
-        return ""
+        return ("", []) if with_links else ""
 
 
 def log_no_from_link(link):
@@ -110,11 +142,70 @@ def collect(ids, db, fetch_bodies=40):
                                    "body": ""}
                 rec["new"] = dt.date.today().isoformat()
                 added += 1
-            if not rec.get("body") and n_body < fetch_bodies:
-                rec["body"] = post_body(bid, ln) or it["desc"]
+            if (not rec.get("body") or "links" not in rec) and n_body < fetch_bodies:
+                body, links = post_body(bid, ln, with_links=True)
+                rec["body"] = rec.get("body") or body or it["desc"]
+                rec["links"] = links
                 n_body += 1
                 time.sleep(0.5)
     return added
+
+
+# ───────── 블로거가 글에 인용한 기사·영상 ─────────
+def link_title(url):
+    """(제목, 출처) — 유튜브는 oEmbed, 나머지는 페이지 제목."""
+    try:
+        if "youtube.com/watch" in url:
+            j = requests.get("https://www.youtube.com/oembed", params={"url": url, "format": "json"}, timeout=15).json()
+            return j.get("title", ""), j.get("author_name", ""), j.get("author_url", "")
+        r = requests.get(url, headers=H, timeout=15)
+        page = r.text[:300000]
+        m = re.search(r'<meta[^>]+property="og:title"[^>]+content="([^"]+)"', page) or \
+            re.search(r"<title[^>]*>(.*?)</title>", page, re.S)
+        site = re.search(r'<meta[^>]+property="og:site_name"[^>]+content="([^"]+)"', page)
+        host = re.sub(r"^https?://(www\.)?", "", url).split("/")[0]
+        return (html_lib.unescape(m.group(1)).strip()[:150] if m else ""), (site.group(1) if site else host), ""
+    except Exception:  # noqa: BLE001
+        return "", re.sub(r"^https?://(www\.)?", "", url).split("/")[0], ""
+
+
+def cited_sources(db, days=7):
+    """최근 days일 새 글에 나온 외부 링크 → [{url, title, source, blog, post}]"""
+    since = (dt.date.today() - dt.timedelta(days=days)).isoformat()
+    out, seen = [], set()
+    for bid, posts in db.items():
+        for ln, p in posts.items():
+            if not (p.get("date", "") >= since or p.get("new", "") >= since):
+                continue
+            for u in p.get("links") or []:
+                if u in seen:
+                    continue
+                seen.add(u)
+                out.append({"url": u, "blog": bid, "post": p.get("title", ""), "ln": ln})
+    return out
+
+
+def learn_sources(db, st, yt_st):
+    """블로거들이 이번 주 글에 인용한 기사·영상을 '학습'에만 씀 (메시지로 보내지 않음 — 블로그는 사용자가 직접 읽음).
+    - 인용 자료 제목은 관심사 학습(즐겨 보는 매체·채널·인물)에 씀
+    - 인용 영상의 채널은 유튜브 주간 선별에서 새 영상을 확인할 채널 목록에 더함
+    - 이미 인용된 영상·링크는 사용자가 블로그에서 볼 테니 다시 고르지 않게 기록"""
+    done = set(st.get("learned_links", []))
+    items = [x for x in cited_sources(db) if x["url"] not in done]
+    for x in items[:60]:
+        title, src, author_url = link_title(x["url"])
+        db[x["blog"]][x["ln"]].setdefault("link_titles", {})[x["url"]] = f"{title or x['url']} ({src})"
+        if "youtube.com/watch" in x["url"]:
+            h = re.search(r"youtube\.com/(@[\w.-]+)", author_url or "")
+            learned = yt_st.setdefault("learned_handles", [])
+            if h and h.group(1) not in learned:
+                learned.append(h.group(1))
+            skip = yt_st.setdefault("sent", [])
+            if x["url"][-11:] not in skip:
+                skip.append(x["url"][-11:])
+        time.sleep(0.3)
+    st["learned_links"] = sorted(done | {x["url"] for x in items[:60]})[-3000:]
+    print(f"블로거 인용 자료 {len(items[:60])}개 학습")
 
 
 def recent_posts(db, days=8, min_per_blog=6, max_per_blog=15):
@@ -125,7 +216,8 @@ def recent_posts(db, days=8, min_per_blog=6, max_per_blog=15):
         items = sorted(posts.items(), key=lambda kv: int(kv[0]) if kv[0].isdigit() else 0, reverse=True)
         pick = [p for k, (_, p) in enumerate(items)
                 if k < min_per_blog or p.get("date", "") >= since or p.get("new", "") >= since][:max_per_blog]
-        out[bid] = [{"title": p["title"], "date": p.get("date", ""), "body": p.get("body", "")[:1000]} for p in pick]
+        out[bid] = [{"title": p["title"], "date": p.get("date", ""), "body": p.get("body", "")[:1000],
+                     "cited": list((p.get("link_titles") or {}).values())[:5]} for p in pick]
     return out
 
 
@@ -141,13 +233,15 @@ def update_profile(db, prof_state):
               f"[기본 관심사 — 블로그 전체 글을 읽고 정리한 것]\n{json.dumps(base, ensure_ascii=False)}\n\n"
               f"[지난주 분석]\n{json.dumps(prev, ensure_ascii=False)}\n\n"
               f"[블로거별 최근 글]\n{json.dumps(recent, ensure_ascii=False)[:60000]}\n\n"
+              "각 글의 cited는 블로거가 글에 인용한 기사·영상 제목이다. 이들이 어떤 출처(매체·유튜브 채널·인물)를 즐겨 보는지도 반영하라.\n"
               "1) 블로거별로 관심사가 어디로 이동하고 있는지 정리하고, "
               "2) 이들이 '앞으로' 쓸 글에 담길 내용을 예측해, 그 글을 쓰기 전에 읽을 법한 기사를 찾는 구글 뉴스 검색어를 만들어라. "
               f"반드시 {n}명 블로거 모두를 고르게 다뤄라(블로거마다 5~7개, 총 {n * 5}~{n * 7}개). "
               "이미 쓴 글의 주제를 반복하기보다 다음 단계·파생 이슈·선행 지표 위주로. "
               "검색어는 1~4단어, 한국어(lang=ko)와 영어(lang=en)를 섞어라.\n"
               '출력: {"shift": "전체 흐름 2~3문장", "by_blog": {"블로그ID": "그 블로거의 관심 이동 1~2문장"}, '
-              '"themes": ["..."], "next_topics": ["..."], "queries": [{"q": "...", "lang": "ko", "blog": "블로그ID"}]}')
+              '"themes": ["..."], "next_topics": ["..."], "favorite_sources": ["즐겨 인용하는 매체·채널·인물"], '
+              '"queries": [{"q": "...", "lang": "ko", "blog": "블로그ID"}]}')
     return ask_claude_json(prompt, max_tokens=4000)
 
 
@@ -163,10 +257,28 @@ def main():
         for p in posts.values():
             p["date"] = norm_date(p.get("date", "")) or p.get("date", "")
     added = collect(cfg["ids"], db)
+    # 예전에 모은 최근 3주 글은 링크가 없어서 한 번 더 읽음 (한 번에 최대 60개)
+    since = (dt.date.today() - dt.timedelta(days=21)).isoformat()
+    n = 0
+    for bid in cfg["ids"]:
+        for ln, p in (db.get(bid) or {}).items():
+            if n < 60 and "links" not in p and p.get("date", "") >= since:
+                _, p["links"] = post_body(bid, ln, with_links=True)
+                n += 1
+                time.sleep(0.5)
     save_state("blog_posts", db)
     print(f"새 글 {added}개, 총 {sum(len(v) for v in db.values())}개 저장")
 
     st = load_state("blogs")
+    yt_st = load_state("youtube")
+    try:
+        learn_sources(db, st, yt_st)
+        save_state("blogs", st)
+        save_state("youtube", yt_st)
+        save_state("blog_posts", db)
+    except Exception as e:  # noqa: BLE001
+        print(f"인용 자료 학습 실패: {e}", file=sys.stderr)
+
     if llm_available() and "--no-llm" not in sys.argv:
         try:
             prof = update_profile(db, st)

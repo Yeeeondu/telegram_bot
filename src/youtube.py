@@ -246,11 +246,14 @@ def make_queries(prof, n=14):
 def pick(prof, cands, n):
     payload = [{"i": k, "title": c["title"], "channel": c["channel"], "minutes": c["minutes"],
                 "when": c["when"], "views": c["views"], "desc": c["desc"]} for k, c in enumerate(cands)]
+    ex = load_config()["blogs"].get("examples", [])
     res = ask_claude_json(
         f"아래는 투자 블로거 6명의 관심사다.\n{prof}\n\n이번 주 올라온 유튜브 영상 후보다. "
         f"이 블로거들이 정리해 볼 만한 영상을 좋은 순서로 {n + 3}개까지 골라라.\n"
         "고를 것: 핵심 인물(투자자·경영진·연구자·애널리스트)이 직접 오래 말하는 인터뷰·강연·팟캐스트, "
         "산업 구조·수요·공급·설비투자·기술 변화처럼 앞으로를 내다보는 내용. 블로거 관심사와 겹칠수록 좋음.\n"
+        "목적: 사용자가 이 블로그들 없이도(블로거들이 글을 멈춰도) 이들이 관심 가질 만한 영상을 계속 보게 하는 것.\n"
+        f"이 사용자가 '이런 걸 원한다'고 직접 보여준 예시: {json.dumps(ex, ensure_ascii=False)}\n"
         "빼는 것: 15분 미만 영상·쇼츠, 뉴스 클립 재편집, 리액션·요약 채널, 개별 종목 매수·매도 추천, "
         "단기 주가·지수 전망, 같은 인물·같은 주제의 중복(하나만).\n"
         '형식: {"picks": [{"i": 번호, "why": "어느 블로거 관심사와 맞는지 한 줄"}]}\n\n'
@@ -277,7 +280,8 @@ def weekly():
         except Exception as e:  # noqa: BLE001
             print(f"검색 실패 {q}: {e}", file=sys.stderr)
         time.sleep(1)
-    for h in cfg.get("channels", []):
+    # 블로거들이 이미 인용한 영상은 st["sent"]에 들어 있어 제외됨. 그들이 즐겨 보는 채널(learned_handles)은 확인 대상에 더함
+    for h in list(dict.fromkeys(cfg.get("channels", []) + st.get("learned_handles", []))):
         try:
             cid = channel_id(h, cache)
             if cid:
