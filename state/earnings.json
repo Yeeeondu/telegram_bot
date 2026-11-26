@@ -101,6 +101,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/01/kanzhun-bz-q2-2026-earnings-call-transcript/",
         "date": "2026-09-01",
         "q": "Q2 2026"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/kanzhun-bz-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
       }
     ],
     "ZM": [
@@ -134,6 +139,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/01/qfin-qfin-q2-2026-earnings-call-transcript/",
         "date": "2026-09-01",
         "q": "Q2 2026"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/qfin-holdings-qfin-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
       }
     ],
     "NCNO": [
@@ -229,6 +239,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/02/li-auto-li-q2-2026-earnings-call-transcript/",
         "date": "2026-09-02",
         "q": "Q2 2026"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/li-li-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
       }
     ],
     "MOV": [
@@ -421,6 +436,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/09/yatsen-ysg-q2-2026-earnings-call-transcript/",
         "date": "2026-09-09",
         "q": "Q2 2026"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/yatsen-ysg-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
       }
     ],
     "CXM": [
@@ -660,6 +680,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/09/ambarella-amba-q2-2027-earnings-call-transcript/",
         "date": "2026-09-09",
         "q": "Q2 2027"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/ambarella-amba-q3-2027-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2027"
       }
     ],
     "ASAN": [
@@ -995,6 +1020,11 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/09/09/nano-x-imaging-nnox-q2-2026-earnings-call-transcript/",
         "date": "2026-09-09",
         "q": "Q2 2026"
+      },
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/nano-x-nnox-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
       }
     ],
     "ODD": [
@@ -23095,6 +23125,76 @@
         "url": "https://www.fool.com/earnings/call-transcripts/2026/11/24/workday-wday-q3-2027-earnings-call-transcript/",
         "date": "2026-11-24",
         "q": "Q3 2027"
+      }
+    ],
+    "GDS": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/gds-gds-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "ADSK": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/autodesk-adsk-q3-2027-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2027"
+      }
+    ],
+    "HPQ": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/hp-hpq-q4-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q4 2026"
+      }
+    ],
+    "GDRX": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/goodrx-gdrx-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "NOAH": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/noah-holdings-noah-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "DSX": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/diana-dsx-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "HDL": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/super-hi-hdl-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "BBAR": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/bbva-argentina-bbar-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "GOTU": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/gaotu-techedu-gotu-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q3 2026"
+      }
+    ],
+    "DE": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/25/deere-de-q4-2026-earnings-call-transcript/",
+        "date": "2026-11-25",
+        "q": "Q4 2026"
       }
     ]
   },
