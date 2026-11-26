@@ -551,6 +551,20 @@
       "person": "일론 머스크",
       "key": "elonmuskisgivingaway11billioninspacexstockandcomingout31bill",
       "remark": ""
+    },
+    {
+      "date": "2026-11-26",
+      "person": "빌 애크먼",
+      "key": "billackmanwarnsthefedsobsessionwith2inflationwillplungethewo",
+      "occasion": "연준의 2% 인플레이션 목표를 비판한 본인 발언(SNS 글로 추정, 'Tell me why I am wrong')",
+      "remark": "연준이 2% 인플레이션 목표에 집착하면 세계가 경기침체에 빠질 것이라고 경고했다."
+    },
+    {
+      "date": "2026-11-26",
+      "person": "일론 머스크",
+      "key": "elonmuskteslaandspacexchiefonaiunequivocalsuperintelligenceh",
+      "occasion": "AI에 대한 머스크 본인의 공개 발언(SNS 글로 추정)",
+      "remark": "\"Unequivocal super intelligence has arrived. Welcome to the Singularity\""
     }
   ]
 }
