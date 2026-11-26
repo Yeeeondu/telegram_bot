@@ -23,7 +23,7 @@ import json
 import re
 import sys
 
-from common import html_escape, load_config, load_state, save_state
+from common import html_escape, load_config, load_state, save_state, notify_error_once
 from news import ask_claude_json, google_news, llm_available, send_long
 from thirteenf import sec_get
 
@@ -424,7 +424,12 @@ def main():
         return
     if "--plans" in sys.argv:  # 매일: 자금 조달 방향 언급 (지난 24시간, 별도 메시지)
         today = dt.date.today()
-        items = plan_statements(cfg, st, today, (today - dt.timedelta(days=1)).isoformat())
+        try:
+            items = plan_statements(cfg, st, today, (today - dt.timedelta(days=1)).isoformat())
+        except Exception as e:  # noqa: BLE001  하루 건너뛰어도 다음 날 다시 확인
+            print(f"자금 조달 계획 언급 정리 실패: {e}", file=sys.stderr)
+            notify_error_once("자금 조달 계획 언급", e)
+            return
         save_state("funding", st)
         send_plans(items, (today - dt.timedelta(days=1)).strftime("%m/%d"), today.strftime("%m/%d"))
         return

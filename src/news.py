@@ -130,15 +130,47 @@ def ask_claude(prompt, system="", max_tokens=3000, model=None):
     r.raise_for_status()
 
 
+def _escape_inner_quotes(raw):
+    """문자열 안에 그대로 들어간 큰따옴표를 \\" 로 고침.
+    문자열을 닫는 따옴표 뒤에는 , : } ] 중 하나가 와야 한다는 점으로 구분."""
+    out, in_str, i, n = [], False, 0, len(raw)
+    while i < n:
+        c = raw[i]
+        if c == "\\" and in_str:
+            out.append(raw[i:i + 2])
+            i += 2
+            continue
+        if c == '"':
+            if not in_str:
+                in_str = True
+            else:
+                j = i + 1
+                while j < n and raw[j] in " \t\r\n":
+                    j += 1
+                if j >= n or raw[j] in ",:}]":
+                    in_str = False
+                else:
+                    out.append('\\"')
+                    i += 1
+                    continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 def _parse_json(text):
+    text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M)
     m = re.search(r"[\[{].*[\]}]", text, re.S)
     raw = m.group(0) if m else text
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
-        # 흔한 형식 실수(끝 쉼표, 줄바꿈 문자) 보정 후 재시도
+        # 흔한 형식 실수(끝 쉼표, 줄바꿈 문자, 문자열 안 큰따옴표) 보정 후 재시도
         fixed = re.sub(r",\s*([\]}])", r"\1", raw).replace("\n", " ")
-        return json.loads(fixed)
+        try:
+            return json.loads(fixed)
+        except json.JSONDecodeError:
+            return json.loads(_escape_inner_quotes(fixed))
 
 
 def ask_claude_json(prompt, system="", max_tokens=3000, model=None):
@@ -151,7 +183,7 @@ def ask_claude_json(prompt, system="", max_tokens=3000, model=None):
             return _parse_json(text)
         except json.JSONDecodeError as e:
             last = e
-            print(f"JSON 형식 오류({attempt + 1}회): {e}", file=sys.stderr)
+            print(f"JSON 형식 오류({attempt + 1}회): {e} — 받은 글 앞부분: {text[:300]!r}", file=sys.stderr)
             ask = (prompt + "\n\n앞선 답이 JSON 형식 오류였습니다. 이번에는 문법이 올바른 JSON만, 설명 없이 출력하세요. "
                    "문자열 안에 큰따옴표를 쓰지 말고 작은따옴표나 「」를 쓰세요.")
     raise last
