@@ -23196,6 +23196,27 @@
         "date": "2026-11-25",
         "q": "Q4 2026"
       }
+    ],
+    "FINV": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/26/finvolution-finv-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-26",
+        "q": "Q3 2026"
+      }
+    ],
+    "GGAL": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/26/galicia-ggal-q3-2026-earnings-call-transcript/",
+        "date": "2026-11-26",
+        "q": "Q3 2026"
+      }
+    ],
+    "OMSE": [
+      {
+        "url": "https://www.fool.com/earnings/call-transcripts/2026/11/26/oms-energy-omse-q2-2027-earnings-call-transcript/",
+        "date": "2026-11-26",
+        "q": "Q2 2027"
+      }
     ]
   },
   "full_months": [
