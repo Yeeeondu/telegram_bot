@@ -586,6 +586,27 @@
       "key": "wherewillthatcomefromelonmuskwarnsaifirmsneedhundredsofbilli",
       "occasion": "AI 업계 운전자본에 대한 머스크 본인의 공개 발언(SNS 글로 추정)",
       "remark": "AI 기업들이 수천억 달러의 운전자본이 필요하다며 「그 돈이 어디서 나오느냐」고 물었고, 2027년 자금난이 심각할 것이라고 경고했다."
+    },
+    {
+      "date": "2026-11-28",
+      "person": "빌 애크먼",
+      "key": "allofusareguaranteedtolookfoolishbillionairebillackmansaysai",
+      "occasion": "AI가 투자자들을 곤혹스럽게 만들 것이라는 애크먼 본인의 공개 발언(SNS 글 또는 인터뷰로 추정)",
+      "remark": "「우리 모두 어리석어 보이게 될 것이 확실하다」며, 인터넷이 버핏의 월드북을 덮쳤듯 AI도 모든 투자자를 덮칠 것이라고 말했다."
+    },
+    {
+      "date": "2026-11-28",
+      "person": "일론 머스크",
+      "key": "elonmuskpredictsmassiveleapinaicapabilitiesthatwillmaketoday",
+      "occasion": "OpenAI의 지능 지표 공개 이후 AI 발전에 대한 머스크 본인의 공개 발언(SNS 글로 추정)",
+      "remark": "AI 역량이 크게 도약해 오늘날의 기술이 「막대기를 가지고 노는 원시인」처럼 보이게 될 것이라고 예측했다."
+    },
+    {
+      "date": "2026-11-28",
+      "person": "일론 머스크",
+      "key": "wecantbeatthemelonmuskpubliclyconcededdefeatintheaimodelrace",
+      "occasion": "AI 모델 경쟁과 xAI 현황에 대한 머스크 본인의 공개 발언 및 직원 대상 발언",
+      "remark": "「우리는 그들을 이길 수 없다」며 AI 모델 경쟁에서 뒤처졌음을 인정했고, GPU 자원을 낭비하는 사람은 해고하겠다고 경고했다."
     }
   ]
 }
